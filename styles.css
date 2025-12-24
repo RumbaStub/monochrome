@@ -3026,68 +3026,192 @@ input:checked + .slider::before {
 
 
 
-
-@media screen and (min-width: 1280px) {
-    /* Paste all the TV code above inside these brackets */
-/* --- ADVANCED TV OPTIMIZATION --- */
-
-html {
-    /* Large base font for 10ft viewing */
-    font-size: 125%; 
-    /* Force 5% safe margins to prevent overscan clipping */
-    padding: 3vh 5vw; 
-    box-sizing: border-box;
-    background-color: #000;
+/* Focus Indicators for D-pad Navigation */
+:focus-visible {
+    outline: 3px solid var(--highlight) !important;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(var(--highlight-rgb), 0.3);
+    transition: outline-offset 0.2s ease, transform 0.2s ease;
 }
 
-.app-container {
-    /* Widen sidebar and increase player height for better remote targets */
+.track-item:focus-visible, 
+.card:focus-visible,
+.nav-item a:focus-visible,
+.buttons button:focus-visible,
+.search-tab:focus-visible,
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible {
+    background-color: var(--secondary);
+    transform: scale(1.02);
+    z-index: 10;
+}
+
+/* TV Mode Scaling */
+:root.tv-mode {
+    font-size: 135%; /* Significant scaling for 10ft experience */
+}
+
+.tv-mode .app-container {
     grid-template:
         "sidebar main" 1fr
         "player player" 140px / 300px 1fr;
-    height: 94vh; /* Adjusted for safe area padding */
 }
 
-.main-content {
-    padding: var(--spacing-xl);
-    /* Ruthless simplification: hide non-essential scrollbars if possible */
-    scrollbar-width: none; 
+.tv-mode .sidebar {
+    padding: 2rem;
+    gap: 3rem;
 }
 
-/* Make it obvious where the remote "cursor" is */
-:focus-visible {
-    outline: 5px solid var(--highlight) !important;
-    outline-offset: 4px;
-    box-shadow: 0 0 25px rgba(var(--highlight-rgb), 0.6);
-    transform: scale(1.05); /* "Pop" effect when selected */
-    transition: transform 0.2s ease-out;
+.tv-mode .sidebar-logo {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
 }
 
-/* Ensure cards and tracks look distinct when "hovered" by the remote */
-.card:focus-visible, .track-item:focus-visible {
-    background-color: var(--secondary);
-    border-radius: var(--radius);
+.tv-mode .sidebar-logo svg {
+    width: 24px;
+    height: 24px;
 }
 
-.now-playing-bar {
-    padding: var(--spacing-lg) var(--spacing-2xl);
-    gap: var(--spacing-2xl);
+.tv-mode .sidebar-nav .nav-item a {
+    padding: 1rem;
+    gap: 1.5rem;
 }
 
-/* Thicker progress bar for easier visual tracking from distance */
-.progress-bar {
-    height: 12px !important;
+.tv-mode .sidebar-nav .nav-item a svg {
+    width: 28px;
+    height: 28px;
 }
 
-.player-controls .buttons .play-pause-btn {
-    width: 80px; 
-    height: 80px;
+.tv-mode .main-content {
+    padding: 3rem;
 }
 
-/* Bigger album art in the player bar */
-.track-info .cover {
-    width: 80px;
-    height: 80px;
+.tv-mode .section-title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
 }
 
+.tv-mode .card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2.5rem;
 }
+
+.tv-mode .card {
+    padding: 1.5rem;
+}
+
+.tv-mode .track-item {
+    padding: 1.25rem;
+    gap: 1.5rem;
+    grid-template-columns: 60px 1fr auto auto;
+}
+
+.tv-mode .track-number {
+    font-size: 1.2rem;
+}
+
+.tv-mode .track-item-cover {
+    width: 60px;
+    height: 60px;
+}
+
+.tv-mode .track-item-details .title {
+    font-size: 1.2rem;
+}
+
+.tv-mode .track-item-details .artist {
+    font-size: 1rem;
+}
+
+.tv-mode .now-playing-bar {
+    height: 140px;
+    padding: 0 3rem;
+}
+
+.tv-mode .track-info .cover {
+    width: 100px;
+    height: 100px;
+}
+
+.tv-mode .track-info .details .title {
+    font-size: 1.4rem;
+}
+
+.tv-mode .track-info .details .artist {
+    font-size: 1.1rem;
+}
+
+.tv-mode .player-controls .buttons {
+    gap: 2rem;
+}
+
+.tv-mode .player-controls .buttons button svg {
+    width: 32px;
+    height: 32px;
+}
+
+.tv-mode .player-controls .buttons .play-pause-btn {
+    width: 64px;
+    height: 64px;
+}
+
+.tv-mode .progress-bar {
+    height: 10px;
+}
+
+.tv-mode .progress-container {
+    font-size: 1rem;
+}
+
+.tv-mode .detail-header {
+    gap: 3rem;
+    margin-bottom: 3rem;
+}
+
+.tv-mode .detail-header-image {
+    width: 350px;
+    height: 350px;
+}
+
+.tv-mode .detail-header-info .title {
+    font-size: 5rem;
+}
+
+.tv-mode .detail-header-info .meta {
+    font-size: 1.2rem;
+    margin-top: 1.5rem;
+}
+
+.tv-mode #fullscreen-cover-image {
+    max-height: 70vh;
+}
+
+.tv-mode #fullscreen-track-title {
+    font-size: 3.5rem;
+}
+
+.tv-mode #fullscreen-track-artist {
+    font-size: 2rem;
+}
+/ *   T V   M o d e   E n h a n c e m e n t s   * /  
+ . t v - m o d e   : f o c u s - v i s i b l e   {  
+         o u t l i n e :   4 p x   s o l i d   v a r ( - - h i g h l i g h t )   ! i m p o r t a n t ;  
+         o u t l i n e - o f f s e t :   4 p x ;  
+         b o x - s h a d o w :   0   0   0   4 p x   v a r ( - - b a c k g r o u n d ) ;  
+         z - i n d e x :   1 0 0 ;  
+ }  
+  
+ . t v - m o d e   . t r a c k - i t e m : f o c u s - v i s i b l e   {  
+         b a c k g r o u n d - c o l o r :   v a r ( - - s e c o n d a r y ) ;  
+         b o r d e r - r a d i u s :   v a r ( - - r a d i u s ) ;  
+ }  
+  
+ . t v - m o d e   . c a r d : f o c u s - v i s i b l e   {  
+         t r a n s f o r m :   s c a l e ( 1 . 0 5 ) ;  
+         b a c k g r o u n d - c o l o r :   v a r ( - - s e c o n d a r y ) ;  
+ }  
+  
+ . t v - m o d e   . s i d e b a r - n a v   . n a v - i t e m   a : f o c u s - v i s i b l e   {  
+         b a c k g r o u n d - c o l o r :   v a r ( - - s e c o n d a r y ) ;  
+ }  
+ 

@@ -1,7 +1,7 @@
 
 //js/app.js
 import { LosslessAPI } from './api.js';
-import { apiSettings, themeManager, nowPlayingSettings } from './storage.js';
+import { apiSettings, themeManager, nowPlayingSettings, tvModeSettings } from './storage.js';
 import { UIRenderer } from './ui.js';
 import { Player } from './player.js';
 import { LastFMScrobbler } from './lastfm.js';
@@ -81,12 +81,13 @@ function initializeKeyboardShortcuts(player, audioPlayer, lyricsPanel) {
     document.addEventListener('keydown', (e) => {
         if (e.target.matches('input, textarea')) return;
 
-        switch(e.key.toLowerCase()) {
+        switch (e.key.toLowerCase()) {
             case ' ':
                 e.preventDefault();
                 player.handlePlayPause();
                 break;
             case 'arrowright':
+                if (tvModeSettings.isEnabled()) return; // Allow default navigation
                 if (e.shiftKey) {
                     player.playNext();
                 } else {
@@ -97,6 +98,7 @@ function initializeKeyboardShortcuts(player, audioPlayer, lyricsPanel) {
                 }
                 break;
             case 'arrowleft':
+                if (tvModeSettings.isEnabled()) return; // Allow default navigation
                 if (e.shiftKey) {
                     player.playPrev();
                 } else {
@@ -104,10 +106,12 @@ function initializeKeyboardShortcuts(player, audioPlayer, lyricsPanel) {
                 }
                 break;
             case 'arrowup':
+                if (tvModeSettings.isEnabled()) return; // Allow default navigation
                 e.preventDefault();
                 audioPlayer.volume = Math.min(1, audioPlayer.volume + 0.1);
                 break;
             case 'arrowdown':
+                if (tvModeSettings.isEnabled()) return; // Allow default navigation
                 e.preventDefault();
                 audioPlayer.volume = Math.max(0, audioPlayer.volume - 0.1);
                 break;
@@ -141,6 +145,11 @@ function initializeKeyboardShortcuts(player, audioPlayer, lyricsPanel) {
                 break;
             case 'l':
                 document.querySelector('.now-playing-bar .cover')?.click();
+                break;
+            case 'enter':
+                if (document.activeElement && document.activeElement !== document.body) {
+                    document.activeElement.click();
+                }
                 break;
         }
     });
@@ -209,6 +218,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     initializeUIInteractions(player, api);
     initializeKeyboardShortcuts(player, audioPlayer, lyricsPanel);
     initializeMediaSessionHandlers(player);
+
+    if (tvModeSettings.isEnabled()) {
+        document.documentElement.classList.add('tv-mode');
+    }
 
     const castBtn = document.getElementById('cast-btn');
     initializeCasting(audioPlayer, castBtn);
@@ -329,8 +342,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Update Fullscreen/Enlarged Cover if it's open
         const fullscreenOverlay = document.getElementById('fullscreen-cover-overlay');
         if (fullscreenOverlay && getComputedStyle(fullscreenOverlay).display !== 'none') {
-             const nextTrack = player.getNextTrack();
-             ui.showFullscreenCover(player.currentTrack, nextTrack);
+            const nextTrack = player.getNextTrack();
+            ui.showFullscreenCover(player.currentTrack, nextTrack);
         }
     });
 
@@ -355,27 +368,27 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
         if (e.target.closest('#download-playlist-btn')) {
-    const btn = e.target.closest('#download-playlist-btn');
-    if (btn.disabled) return;
+            const btn = e.target.closest('#download-playlist-btn');
+            if (btn.disabled) return;
 
-    const playlistId = window.location.hash.split('/')[1];
-    if (!playlistId) return;
+            const playlistId = window.location.hash.split('/')[1];
+            if (!playlistId) return;
 
-    btn.disabled = true;
-    const originalHTML = btn.innerHTML;
-    btn.innerHTML = '<svg class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg><span>Downloading...</span>';
+            btn.disabled = true;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<svg class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg><span>Downloading...</span>';
 
-    try {
-        const { playlist, tracks } = await api.getPlaylist(playlistId);
-        await downloadPlaylistAsZip(playlist, tracks, api, player.quality, lyricsManager);
-    } catch (error) {
-        console.error('Playlist download failed:', error);
-        alert('Failed to download playlist: ' + error.message);
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = originalHTML;
-    }
-}
+            try {
+                const { playlist, tracks } = await api.getPlaylist(playlistId);
+                await downloadPlaylistAsZip(playlist, tracks, api, player.quality, lyricsManager);
+            } catch (error) {
+                console.error('Playlist download failed:', error);
+                alert('Failed to download playlist: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            }
+        }
         if (e.target.closest('#play-playlist-btn')) {
             const btn = e.target.closest('#play-playlist-btn');
             if (btn.disabled) return;
@@ -432,22 +445,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             try {
                 const artist = await api.getArtist(artistId);
-                
+
                 if (!artist.albums || artist.albums.length === 0) {
                     throw new Error("No albums found for this artist");
                 }
 
-                const trackSet = new Set(); 
+                const trackSet = new Set();
                 const allTracks = [];
-                
+
                 const chunks = [];
                 const chunkSize = 3;
                 const albums = artist.albums;
-                
+
                 for (let i = 0; i < albums.length; i += chunkSize) {
                     chunks.push(albums.slice(i, i + chunkSize));
                 }
-                
+
                 for (const chunk of chunks) {
                     await Promise.all(chunk.map(async (album) => {
                         try {
@@ -473,7 +486,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     player.setQueue(allTracks, 0);
                     player.playTrackFromQueue();
                 } else {
-                     throw new Error("No tracks found across all albums");
+                    throw new Error("No tracks found across all albums");
                 }
 
             } catch (error) {

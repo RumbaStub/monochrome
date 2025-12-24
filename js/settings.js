@@ -1,5 +1,5 @@
 //js/settings
-import { themeManager, lastFMStorage, nowPlayingSettings, lyricsSettings, backgroundSettings } from './storage.js';
+import { themeManager, lastFMStorage, nowPlayingSettings, lyricsSettings, backgroundSettings, tvModeSettings } from './storage.js';
 
 export function initializeSettings(scrobbler, player, api, ui) {
     const lastfmConnectBtn = document.getElementById('lastfm-connect-btn');
@@ -191,6 +191,15 @@ export function initializeSettings(scrobbler, player, api, ui) {
         albumBackgroundToggle.checked = backgroundSettings.isEnabled();
         albumBackgroundToggle.addEventListener('change', (e) => {
             backgroundSettings.setEnabled(e.target.checked);
+        });
+    }
+
+    // TV Mode Toggle
+    const tvModeToggle = document.getElementById('tv-mode-toggle');
+    if (tvModeToggle) {
+        tvModeToggle.checked = tvModeSettings.isEnabled();
+        tvModeToggle.addEventListener('change', (e) => {
+            tvModeSettings.setEnabled(e.target.checked);
         });
     }
 

@@ -17,7 +17,7 @@ export class UIRenderer {
         // If the album background setting is disabled, we don't do global coloring
         // except possibly for the album page which handles its own check.
         // But here we are handling the "not on album page" case or general updates.
-        
+
         // Check if we are currently viewing an album page
         const isAlbumPage = document.getElementById('page-album').classList.contains('active');
 
@@ -40,7 +40,7 @@ export class UIRenderer {
 
     createTrackMenuButton() {
         return `
-            <button class="track-menu-btn" onclick="event.stopPropagation();" title="More options">
+            <button class="track-menu-btn" onclick="event.stopPropagation();" title="More options" tabindex="0">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="1"></circle>
                     <circle cx="12" cy="5" r="1"></circle>
@@ -86,7 +86,7 @@ export class UIRenderer {
         }
 
         return `
-            <div class="track-item" data-track-id="${track.id}">
+            <div class="track-item" data-track-id="${track.id}" tabindex="0" role="button" aria-label="${trackTitle} by ${trackArtists}">
                 ${trackNumberHTML}
                 <div class="track-item-info">
                     <div class="track-item-details">
@@ -98,7 +98,7 @@ export class UIRenderer {
                     </div>
                 </div>
                 <div class="track-item-duration">${formatTime(track.duration)}</div>
-                <button class="track-menu-btn" type="button" title="More options">
+                <button class="track-menu-btn" type="button" title="More options" tabindex="0">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="1"></circle>
                         <circle cx="12" cy="5" r="1"></circle>
@@ -231,9 +231,9 @@ export class UIRenderer {
 
     setVibrantColor(color) {
         if (!color) return;
-        
+
         const root = document.documentElement;
-        
+
         // Calculate contrast text color
         const hex = color.replace('#', '');
         const r = parseInt(hex.substr(0, 2), 16);
@@ -253,12 +253,12 @@ export class UIRenderer {
         // Calculate a safe hover color (darken if too light)
         let hoverColor;
         if (brightness > 200) {
-             const dr = Math.floor(r * 0.85);
-             const dg = Math.floor(g * 0.85);
-             const db = Math.floor(b * 0.85);
-             hoverColor = `rgba(${dr}, ${dg}, ${db}, 0.25)`;
+            const dr = Math.floor(r * 0.85);
+            const dg = Math.floor(g * 0.85);
+            const db = Math.floor(b * 0.85);
+            hoverColor = `rgba(${dr}, ${dg}, ${db}, 0.25)`;
         } else {
-             hoverColor = `rgba(${r}, ${g}, ${b}, 0.15)`;
+            hoverColor = `rgba(${r}, ${g}, ${b}, 0.15)`;
         }
         root.style.setProperty('--track-hover-bg', hoverColor);
     }
@@ -282,7 +282,7 @@ export class UIRenderer {
         const title = document.getElementById('fullscreen-track-title');
         const artist = document.getElementById('fullscreen-track-artist');
         const nextTrackEl = document.getElementById('fullscreen-next-track');
-        
+
         const coverUrl = this.api.getCoverUrl(track.album?.cover, '1280');
 
         image.src = coverUrl;
@@ -292,7 +292,7 @@ export class UIRenderer {
         if (nextTrack) {
             nextTrackEl.style.display = 'flex';
             nextTrackEl.querySelector('.value').textContent = `${nextTrack.title} • ${nextTrack.artist?.name || 'Unknown'}`;
-            
+
             // Replay animation
             nextTrackEl.classList.remove('animate-in');
             void nextTrackEl.offsetWidth; // Trigger reflow
@@ -304,7 +304,7 @@ export class UIRenderer {
 
         // Set the background image via CSS variable for the pseudo-element to use
         overlay.style.setProperty('--bg-image', `url('${coverUrl}')`);
-        
+
         overlay.style.display = 'flex';
     }
 
@@ -325,8 +325,8 @@ export class UIRenderer {
 
         // Clear background and color if not on album page
         if (pageId !== 'album') {
-             this.setPageBackground(null);
-             this.updateGlobalTheme();
+            this.setPageBackground(null);
+            this.updateGlobalTheme();
         }
 
         if (pageId === 'settings') {
@@ -546,13 +546,13 @@ export class UIRenderer {
                 // Filter out current album and duplicates
                 const otherAlbums = artistData.albums
                     .filter(a => a.id != album.id)
-                    .filter((a, index, self) => 
+                    .filter((a, index, self) =>
                         index === self.findIndex((t) => t.title === a.title) // Dedup by title
                     )
                     .slice(0, 12); // Limit to 12
 
                 const moreContainer = document.getElementById('album-more-albums');
-                
+
                 if (otherAlbums.length > 0) {
                     moreContainer.innerHTML = otherAlbums.map(a => this.createAlbumCardHTML(a)).join('');
                 } else {
@@ -569,21 +569,21 @@ export class UIRenderer {
         }
     }
 
-async renderPlaylistPage(playlistId) {
-    this.showPage('playlist');
+    async renderPlaylistPage(playlistId) {
+        this.showPage('playlist');
 
-    const imageEl = document.getElementById('playlist-detail-image');
-    const titleEl = document.getElementById('playlist-detail-title');
-    const metaEl = document.getElementById('playlist-detail-meta');
-    const descEl = document.getElementById('playlist-detail-description');
-    const tracklistContainer = document.getElementById('playlist-detail-tracklist');
+        const imageEl = document.getElementById('playlist-detail-image');
+        const titleEl = document.getElementById('playlist-detail-title');
+        const metaEl = document.getElementById('playlist-detail-meta');
+        const descEl = document.getElementById('playlist-detail-description');
+        const tracklistContainer = document.getElementById('playlist-detail-tracklist');
 
-    imageEl.src = '';
-    imageEl.style.backgroundColor = 'var(--muted)';
-    titleEl.innerHTML = '<div class="skeleton" style="height: 48px; width: 300px; max-width: 90%;"></div>';
-    metaEl.innerHTML = '<div class="skeleton" style="height: 16px; width: 200px; max-width: 80%;"></div>';
-    descEl.innerHTML = '<div class="skeleton" style="height: 16px; width: 100%;"></div>';
-    tracklistContainer.innerHTML = `
+        imageEl.src = '';
+        imageEl.style.backgroundColor = 'var(--muted)';
+        titleEl.innerHTML = '<div class="skeleton" style="height: 48px; width: 300px; max-width: 90%;"></div>';
+        metaEl.innerHTML = '<div class="skeleton" style="height: 16px; width: 200px; max-width: 80%;"></div>';
+        descEl.innerHTML = '<div class="skeleton" style="height: 16px; width: 100%;"></div>';
+        tracklistContainer.innerHTML = `
         <div class="track-list-header">
             <span style="width: 40px; text-align: center;">#</span>
             <span>Title</span>
@@ -592,24 +592,24 @@ async renderPlaylistPage(playlistId) {
         ${this.createSkeletonTracks(10, true)}
     `;
 
-    try {
-        const { playlist, tracks } = await this.api.getPlaylist(playlistId);
+        try {
+            const { playlist, tracks } = await this.api.getPlaylist(playlistId);
 
-        const imageId = playlist.squareImage || playlist.image;
-        imageEl.src = this.api.getCoverUrl(imageId, '1080');
-        imageEl.style.backgroundColor = '';
+            const imageId = playlist.squareImage || playlist.image;
+            imageEl.src = this.api.getCoverUrl(imageId, '1080');
+            imageEl.style.backgroundColor = '';
 
-        titleEl.textContent = playlist.title;
+            titleEl.textContent = playlist.title;
 
-        this.adjustTitleFontSize(titleEl, playlist.title);
+            this.adjustTitleFontSize(titleEl, playlist.title);
 
-        const totalDuration = calculateTotalDuration(tracks);
+            const totalDuration = calculateTotalDuration(tracks);
 
-        metaEl.textContent = `${playlist.numberOfTracks} tracks • ${formatDuration(totalDuration)}`;
+            metaEl.textContent = `${playlist.numberOfTracks} tracks • ${formatDuration(totalDuration)}`;
 
-        descEl.textContent = playlist.description || '';
+            descEl.textContent = playlist.description || '';
 
-        tracklistContainer.innerHTML = `
+            tracklistContainer.innerHTML = `
             <div class="track-list-header">
                 <span style="width: 40px; text-align: center;">#</span>
                 <span>Title</span>
@@ -617,15 +617,16 @@ async renderPlaylistPage(playlistId) {
             </div>
         `;
 
-                    this.renderListWithTracks(tracklistContainer, tracks, true);
-        
-                    recentActivityManager.addPlaylist(playlist);
-        
-                    document.title = `${playlist.title || 'Artist Mix'} - Monochrome`;    } catch (error) {
-        console.error("Failed to load playlist:", error);
-        tracklistContainer.innerHTML = createPlaceholder(`Could not load playlist details. ${error.message}`);
+            this.renderListWithTracks(tracklistContainer, tracks, true);
+
+            recentActivityManager.addPlaylist(playlist);
+
+            document.title = `${playlist.title || 'Artist Mix'} - Monochrome`;
+        } catch (error) {
+            console.error("Failed to load playlist:", error);
+            tracklistContainer.innerHTML = createPlaceholder(`Could not load playlist details. ${error.message}`);
+        }
     }
-}
 
     async renderArtistPage(artistId) {
         this.showPage('artist');
@@ -712,5 +713,5 @@ async renderPlaylistPage(playlistId) {
             }
         });
     }
-    
+
 }

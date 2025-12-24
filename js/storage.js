@@ -349,6 +349,27 @@ export const backgroundSettings = {
     }
 };
 
+export const tvModeSettings = {
+    STORAGE_KEY: 'monochrome-tv-mode-enabled',
+
+    isEnabled() {
+        try {
+            return localStorage.getItem(this.STORAGE_KEY) === 'true';
+        } catch (e) {
+            return false;
+        }
+    },
+
+    setEnabled(enabled) {
+        localStorage.setItem(this.STORAGE_KEY, enabled ? 'true' : 'false');
+        if (enabled) {
+            document.documentElement.classList.add('tv-mode');
+        } else {
+            document.documentElement.classList.remove('tv-mode');
+        }
+    }
+};
+
 export const queueManager = {
     STORAGE_KEY: 'monochrome-queue',
 
