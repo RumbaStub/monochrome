@@ -3023,3 +3023,71 @@ input:checked + .slider::before {
         padding-top: max(1.5rem, env(titlebar-area-height, 0));
     }
 }
+
+
+
+
+@media screen and (min-width: 1280px) {
+    /* Paste all the TV code above inside these brackets */
+/* --- ADVANCED TV OPTIMIZATION --- */
+
+html {
+    /* Large base font for 10ft viewing */
+    font-size: 125%; 
+    /* Force 5% safe margins to prevent overscan clipping */
+    padding: 3vh 5vw; 
+    box-sizing: border-box;
+    background-color: #000;
+}
+
+.app-container {
+    /* Widen sidebar and increase player height for better remote targets */
+    grid-template:
+        "sidebar main" 1fr
+        "player player" 140px / 300px 1fr;
+    height: 94vh; /* Adjusted for safe area padding */
+}
+
+.main-content {
+    padding: var(--spacing-xl);
+    /* Ruthless simplification: hide non-essential scrollbars if possible */
+    scrollbar-width: none; 
+}
+
+/* Make it obvious where the remote "cursor" is */
+:focus-visible {
+    outline: 5px solid var(--highlight) !important;
+    outline-offset: 4px;
+    box-shadow: 0 0 25px rgba(var(--highlight-rgb), 0.6);
+    transform: scale(1.05); /* "Pop" effect when selected */
+    transition: transform 0.2s ease-out;
+}
+
+/* Ensure cards and tracks look distinct when "hovered" by the remote */
+.card:focus-visible, .track-item:focus-visible {
+    background-color: var(--secondary);
+    border-radius: var(--radius);
+}
+
+.now-playing-bar {
+    padding: var(--spacing-lg) var(--spacing-2xl);
+    gap: var(--spacing-2xl);
+}
+
+/* Thicker progress bar for easier visual tracking from distance */
+.progress-bar {
+    height: 12px !important;
+}
+
+.player-controls .buttons .play-pause-btn {
+    width: 80px; 
+    height: 80px;
+}
+
+/* Bigger album art in the player bar */
+.track-info .cover {
+    width: 80px;
+    height: 80px;
+}
+
+}
